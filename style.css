@@ -1,0 +1,354 @@
+/* Clipboard History - Windows 11 style theme.
+ *
+ * All colours come from @define-color entries that clipboard_history.py
+ * prepends to this file (one block for dark, one for light). To restyle the
+ * app, change the palettes in clipboard_history.py (DARK_PALETTE / LIGHT_PALETTE)
+ * - nothing in this file hard-codes a colour.
+ *
+ * Names used: window_bg window_solid border_color shadow_color text
+ * text_secondary accent card_bg card_hover search_bg search_bg_focus
+ * search_border popover_bg danger scroll_thumb
+ */
+
+/* ---- Window / frame ------------------------------------------------------ */
+
+window.ch-window,
+window.ch-window.background {
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+    border: none;
+}
+
+.ch-frame {
+    background-color: @window_bg;
+    color: @text;
+    border: 1px solid @border_color;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px @shadow_color;
+    font-family: "Segoe UI Variable", "Segoe UI", "Inter", "Noto Sans", "Cantarell", sans-serif;
+    font-size: 14px;
+}
+
+/* Used when no compositor is available: opaque, no shadow. */
+.ch-frame.solid {
+    background-color: @window_solid;
+    box-shadow: none;
+}
+
+.ch-frame label {
+    color: @text;
+}
+
+/* ---- Generic button reset ------------------------------------------------ */
+
+.ch-frame button,
+popover.ch-popover button {
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    text-shadow: none;
+    -gtk-icon-shadow: none;
+    outline: none;
+    color: @text;
+    padding: 0;
+    min-height: 0;
+    min-width: 0;
+    border-radius: 4px;
+    transition: background-color 100ms ease, color 100ms ease, opacity 100ms ease;
+}
+
+/* ---- Tab bar ------------------------------------------------------------- */
+
+.ch-frame button.tab-btn {
+    min-height: 34px;
+    padding: 0 10px;
+    color: @text_secondary;
+}
+
+.ch-frame button.tab-btn:hover {
+    background-color: @card_bg;
+}
+
+.ch-frame button.tab-btn.active {
+    color: @text;
+}
+
+.ch-frame box.tab-pill {
+    min-width: 16px;
+    min-height: 3px;
+    border-radius: 2px;
+    background-color: transparent;
+    transition: background-color 100ms ease;
+}
+
+.ch-frame box.tab-pill.active {
+    background-color: @accent;
+}
+
+/* ---- Header -------------------------------------------------------------- */
+
+.ch-frame label.title {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.ch-frame button.link-btn {
+    color: @accent;
+    padding: 3px 8px;
+}
+
+.ch-frame button.link-btn label {
+    color: @accent;
+}
+
+.ch-frame button.link-btn:hover {
+    background-color: @card_bg;
+}
+
+.ch-frame button.link-btn:disabled {
+    opacity: 0.4;
+}
+
+/* ---- Search -------------------------------------------------------------- */
+
+.ch-frame entry.search {
+    background-color: @search_bg;
+    background-image: none;
+    color: @text;
+    caret-color: @text;
+    border: 1px solid transparent;
+    border-bottom: 1px solid @search_border;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+    min-height: 32px;
+    padding: 0 8px;
+    transition: border-color 100ms ease, background-color 100ms ease;
+}
+
+.ch-frame entry.search:focus {
+    background-color: @search_bg_focus;
+    border-bottom-color: @accent;
+    box-shadow: none;
+}
+
+.ch-frame entry.search image {
+    color: @text_secondary;
+}
+
+/* ---- Scrolling ----------------------------------------------------------- */
+
+.ch-frame scrolledwindow,
+.ch-frame viewport,
+.ch-frame .ch-list {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+}
+
+.ch-frame scrolledwindow undershoot.top,
+.ch-frame scrolledwindow undershoot.bottom,
+.ch-frame scrolledwindow overshoot.top,
+.ch-frame scrolledwindow overshoot.bottom {
+    background: none;
+    background-image: none;
+}
+
+.ch-frame scrollbar {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+}
+
+.ch-frame scrollbar trough {
+    background-color: transparent;
+    background-image: none;
+    border: none;
+    min-width: 4px;
+    min-height: 4px;
+}
+
+.ch-frame scrollbar slider {
+    min-width: 4px;
+    min-height: 4px;
+    margin: 0;
+    border: none;
+    border-radius: 2px;
+    background-color: @scroll_thumb;
+}
+
+.ch-frame scrollbar button {
+    opacity: 0;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* ---- Section labels ------------------------------------------------------ */
+
+.ch-frame label.section-label {
+    color: @text_secondary;
+    font-size: 12px;
+    margin: 4px 2px 6px 2px;
+}
+
+/* ---- Cards --------------------------------------------------------------- */
+
+.ch-frame .card {
+    background-color: @card_bg;
+    border-radius: 4px;
+    border-left: 2px solid transparent;
+    padding: 0;
+    margin: 0;
+    transition: background-color 100ms ease, border-color 100ms ease;
+}
+
+.ch-frame .card:hover {
+    background-color: @card_hover;
+}
+
+.ch-frame .card.selected {
+    background-color: @card_hover;
+    border-left-color: @accent;
+}
+
+.ch-frame label.card-text {
+    font-size: 14px;
+    color: @text;
+}
+
+.ch-frame label.card-time {
+    font-size: 12px;
+    color: @text_secondary;
+}
+
+.ch-frame image.pin-icon {
+    color: @accent;
+}
+
+.ch-frame button.more-btn {
+    opacity: 0;
+    min-width: 24px;
+    min-height: 24px;
+    color: @text_secondary;
+}
+
+.ch-frame .card:hover button.more-btn,
+.ch-frame .card.menu-open button.more-btn {
+    opacity: 1;
+}
+
+.ch-frame button.more-btn:hover {
+    background-color: @card_hover;
+    color: @text;
+}
+
+/* ---- Empty state --------------------------------------------------------- */
+
+.ch-frame image.empty-icon {
+    color: @text_secondary;
+    opacity: 0.7;
+}
+
+.ch-frame label.empty-text {
+    color: @text_secondary;
+}
+
+/* ---- Emoji grid ---------------------------------------------------------- */
+
+.ch-frame button.emoji-btn {
+    font-size: 22px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 0;
+}
+
+.ch-frame button.emoji-btn:hover {
+    background-color: @card_hover;
+}
+
+.ch-frame flowbox,
+.ch-frame flowboxchild {
+    background: transparent;
+    outline: none;
+}
+
+/* ---- Popovers ("..." menu and Clear-all confirmation) ---------------------- */
+
+popover.ch-popover,
+popover.ch-popover.background {
+    background-color: @popover_bg;
+    background-image: none;
+    color: @text;
+    border: 1px solid @border_color;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px @shadow_color;
+    padding: 0;
+    font-family: "Segoe UI Variable", "Segoe UI", "Inter", "Noto Sans", "Cantarell", sans-serif;
+    font-size: 14px;
+}
+
+popover.ch-popover label {
+    color: @text;
+}
+
+popover.ch-popover label.popover-title {
+    color: @text_secondary;
+    font-size: 12px;
+    margin: 4px 8px 4px 8px;
+}
+
+popover.ch-popover button.menu-item {
+    padding: 7px 12px;
+    min-width: 120px;
+}
+
+popover.ch-popover button.menu-item:hover {
+    background-color: @card_hover;
+}
+
+popover.ch-popover button.menu-item.danger,
+popover.ch-popover button.menu-item.danger label {
+    color: @danger;
+}
+
+/* ---- Drag grip + pin button (v2) ---------------------------------------- */
+
+.ch-frame .grip-bar {
+    background-color: alpha(@text_secondary, 0.45);
+    border-radius: 2px;
+    min-height: 4px;
+}
+
+.ch-frame button.pin-btn {
+    opacity: 0;
+    min-width: 24px;
+    min-height: 24px;
+    color: @text_secondary;
+}
+
+.ch-frame .card:hover button.pin-btn,
+.ch-frame .card.menu-open button.pin-btn,
+.ch-frame .card.selected button.pin-btn,
+.ch-frame button.pin-btn.pinned {
+    opacity: 1;
+}
+
+.ch-frame button.pin-btn.pinned {
+    color: @accent;
+}
+
+.ch-frame button.pin-btn:hover {
+    background-color: @card_hover;
+    color: @text;
+}
+
+.ch-frame button.pin-btn.pinned:hover {
+    color: @accent;
+}
+
+.ch-frame button.update-btn label {
+    font-weight: 600;
+}
