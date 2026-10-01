@@ -229,13 +229,15 @@ popover.ch-popover button {
 }
 
 .ch-frame button.more-btn {
-    opacity: 0;
+    opacity: 0.35;
     min-width: 24px;
     min-height: 24px;
     color: @text_secondary;
 }
 
 .ch-frame .card:hover button.more-btn,
+.ch-frame .card.hover button.more-btn,
+.ch-frame .card.selected button.more-btn,
 .ch-frame .card.menu-open button.more-btn {
     opacity: 1;
 }
@@ -323,13 +325,14 @@ popover.ch-popover button.menu-item.danger label {
 }
 
 .ch-frame button.pin-btn {
-    opacity: 0;
+    opacity: 0.35;
     min-width: 24px;
     min-height: 24px;
     color: @text_secondary;
 }
 
 .ch-frame .card:hover button.pin-btn,
+.ch-frame .card.hover button.pin-btn,
 .ch-frame .card.menu-open button.pin-btn,
 .ch-frame .card.selected button.pin-btn,
 .ch-frame button.pin-btn.pinned {

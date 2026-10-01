@@ -35,7 +35,7 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 APP_NAME = "clipboard-history"
 
 # --------------------------------------------------------------------------- #
@@ -1051,10 +1051,19 @@ class PopupWindow(Gtk.Window):
                          stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def _make_drag_handle(self, widget: Gtk.EventBox) -> None:
-        widget.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
-        widget.connect("realize", lambda w: w.get_window().set_cursor(
-            Gdk.Cursor.new_from_name(w.get_display(), "grab")))
+        widget.add_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.ENTER_NOTIFY_MASK
+                          | Gdk.EventMask.LEAVE_NOTIFY_MASK)
+        # An invisible EventBox shares its parent's GdkWindow, so the cursor must be switched on
+        # enter/leave instead of being set once (which turned the whole popup into a hand).
+        widget.connect("enter-notify-event", self._set_grab_cursor, True)
+        widget.connect("leave-notify-event", self._set_grab_cursor, False)
         widget.connect("button-press-event", self._on_drag_press)
+
+    def _set_grab_cursor(self, _w: Gtk.Widget, _event: Any, grab: bool) -> bool:
+        gw = self.get_window()
+        if gw is not None:
+            gw.set_cursor(Gdk.Cursor.new_from_name(self.get_display(), "grab") if grab else None)
+        return False
 
     @guarded(False)
     def _on_drag_press(self, _w: Gtk.Widget, event: "Gdk.EventButton") -> bool:
@@ -1075,6 +1084,7 @@ class PopupWindow(Gtk.Window):
             return True
         self._dragging = False
         self._last_drag_pos = None
+        self._set_grab_cursor(self, None, False)   # drag is over: back to the normal arrow
         return False
 
     def _make_search(self, placeholder: str) -> Gtk.Entry:
@@ -1332,7 +1342,10 @@ class PopupWindow(Gtk.Window):
         card = Gtk.EventBox()
         card.set_visible_window(True)
         card.get_style_context().add_class("card")
-        card.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK)
+        card.add_events(Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.ENTER_NOTIFY_MASK
+                        | Gdk.EventMask.LEAVE_NOTIFY_MASK)
+        card.connect("enter-notify-event", lambda w, e: (w.get_style_context().add_class("hover"), False)[1])
+        card.connect("leave-notify-event", self._on_card_leave)
         row = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         # GtkEventBox ignores CSS padding/margin on GTK 3.24, so spacing is set on the widgets.
         row.set_margin_top(10)
@@ -1446,10 +1459,24 @@ class PopupWindow(Gtk.Window):
         pop.connect("show", shown)
         pop.connect("closed", closed)
 
+    @staticmethod
+    def _on_card_leave(card: Gtk.Widget, event: "Gdk.EventCrossing") -> bool:
+        # Moving onto a child (the pin button, the text) is not really leaving the card.
+        if event.detail != Gdk.NotifyType.INFERIOR:
+            card.get_style_context().remove_class("hover")
+        return False
+
     @guarded()
     def _on_card_release(self, _card: Gtk.Widget, event: "Gdk.EventButton", item: Item, more: Gtk.Button) -> bool:
         if self._open_popover is not None:
             return False
+        # GTK 3.24 passes a button's release event on to its parent, so a click on the pin or
+        # "..." button would also reach this handler and copy + close. Ignore those clicks.
+        w = Gtk.get_event_widget(event)
+        while w is not None and w is not _card:
+            if isinstance(w, Gtk.Button):
+                return True
+            w = w.get_parent()
         if event.button == 1:
             self._activate(item)
             return True
@@ -1783,6 +1810,7 @@ class PopupWindow(Gtk.Window):
         self._anim_id = GLib.timeout_add(12, tick)
 
     def hide_popup(self) -> None:
+        self._set_grab_cursor(self, None, False)
         if self.get_visible() and self._user_moved:
             self._save_position()
             self._user_moved = False
